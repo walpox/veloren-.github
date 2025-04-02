@@ -12,6 +12,8 @@ on:
 jobs:
   close-pull-request:
     runs-on: ubuntu-20.04
+    permissions:
+      pull-requests: write
     env:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       PULL_REQUEST_URL: ${{ github.event.pull_request.html_url }}
