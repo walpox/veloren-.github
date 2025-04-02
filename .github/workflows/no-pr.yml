@@ -2,18 +2,16 @@
 #
 # SPDX-License-Identifier: CC0-1.0
 
+# This is a reusable workflow intended to be called when a pull request is opened.
+
 name: Decommission pull requests on GitHub
 
 on:
-  pull_request_target:
-    types:
-      - opened
+  workflow_call:
 
 jobs:
   close-pull-request:
     runs-on: ubuntu-20.04
-    permissions:
-      pull-requests: write
     env:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       PULL_REQUEST_URL: ${{ github.event.pull_request.html_url }}
