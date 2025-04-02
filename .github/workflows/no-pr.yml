@@ -28,7 +28,7 @@ jobs:
         That said, this pull request will be closed automatically.
     steps:
       - name: Close the pull request with a reason and comment
-        run: gh issue close ${PULL_REQUEST_URL} --reason "not planned" --comment ${COMMENT}
+        run: gh issue close "${PULL_REQUEST_URL}" --reason "not planned" --comment "${COMMENT}"
 
 
   
