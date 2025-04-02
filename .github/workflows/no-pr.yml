@@ -1,0 +1,34 @@
+# SPDX-FileCopyrightText: 2025 Javier Pérez
+#
+# SPDX-License-Identifier: CC0-1.0
+
+name: Decommission pull requests on GitHub
+
+on:
+  pull_request:
+    types:
+      - opened
+
+jobs:
+  close-pull-request:
+    runs-on: ubuntu-20.04
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      PULL_REQUEST_URL: ${{ github.event.pull_request.html_url }}
+      COMMENT: |
+        Thank you for your contribution to our project.
+
+        Our repositories hosted on GitHub are merely a mirror,
+        a backup of our main repositories on GitLab.
+
+        Please, submit your contributions to the corresponding repository on GitLab:
+
+        <https://gitlab.com/veloren/>
+
+        That said, this pull request will be closed automatically.
+    steps:
+      - name: Close the pull request with a reason and comment
+        run: gh issue close ${PULL_REQUEST_URL} --reason "not planned" --comment ${COMMENT}
+
+
+  
