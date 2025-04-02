@@ -5,22 +5,22 @@
 name: Decommission pull requests on GitHub
 
 on:
-  pull_request:
+  pull_request_target:
     types:
       - opened
 
 jobs:
   close-pull-request:
     runs-on: ubuntu-20.04
-    permissions: write-all
+    permissions:
+      pull-requests: write
     env:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       PULL_REQUEST_URL: ${{ github.event.pull_request.html_url }}
       COMMENT: |
         Thank you for your contribution to our project.
 
-        Our repositories hosted on GitHub are merely a mirror,
-        a backup of our main repositories on GitLab.
+        Our repositories hosted on GitHub are merely a mirror, a backup of our main repositories on GitLab.
 
         Please, submit your contributions to the corresponding repository on GitLab:
 
@@ -28,8 +28,5 @@ jobs:
 
         That said, this pull request will be closed automatically.
     steps:
-      - name: Close the pull request with a reason and comment
-        run: gh issue close "${PULL_REQUEST_URL}" --reason "not planned" --comment "${COMMENT}"
-
-
-  
+      - name: Close the pull request with a comment
+        run: gh pr close "${PULL_REQUEST_URL}" --comment "${COMMENT}"
