@@ -21,6 +21,7 @@ on:
           The personal access token used to perform operations.
           Some permissions, such as `workflows` are only available to PAT and not to the default GITHUB_TOKEN.
         type: string
+        required: false
         default: ${{ secrets.GITHUB_TOKEN }}
 
 
