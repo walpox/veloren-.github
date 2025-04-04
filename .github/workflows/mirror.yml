@@ -45,14 +45,12 @@ jobs:
       - name: Uninstall LFS
         if: ${{ inputs.enable-lfs }}
         working-directory: ./source
-        run: |
-          git-lfs uninstall
+        run: git-lfs uninstall
 
       - name: Migrate LFS
         if: ${{ inputs.enable-lfs }}
         working-directory: ./source
-        run: |
-          git-lfs migrate export --verbose --include="*" --everything --skip-fetch --yes 2>&1
+        run: git-lfs migrate export --verbose --include="*" --everything --skip-fetch --yes 2>&1
 
       - name: Push changes
         uses: ad-m/github-push-action@master
