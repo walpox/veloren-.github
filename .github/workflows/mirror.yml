@@ -1,0 +1,60 @@
+name: Mirror remote repository to GitHub
+
+# This is a reusable workflow to mirror a remote git repository to GitHub.
+
+on:
+  workflow_call:
+    inputs:
+      repository-url:
+        description: The HTTPS URL of the source git repository to clone to GitHub.
+        type: string
+        required: true
+      enable-lfs:
+        description: |
+          Whether to work with Git LFS artifacts in the workflow.
+          There are certain limits on GitHub, so it is important to keep LFS disabled on some repositories.
+        type: boolean
+        required: false
+        default: false
+
+
+jobs:
+  mirror-remote-repo:
+    runs-on: ubuntu-22.04
+    env:
+      REPOSITORY_URL: ${{ inputs.repository-url }}
+      ENABLE_LFS: ${{ inputs.enable-lfs }}
+    steps:
+      - name: Download and install Git LFS
+        if: ${{ env.ENABLE_LFS }}
+        run: |
+          sudo apt-get update
+          sudo apt-get install git-lfs==2.13.3
+
+      - name: Set up Git LFS
+        if: ${{ env.ENABLE_LFS }}
+        run: git-lfs install
+
+      - name: Clone remote repository
+        run: git clone --branch ${{ github.ref }} ${{ env.REPOSITORY_URL }} source
+
+      - name: Uninstall LFS
+        if: ${{ env.ENABLE_LFS }}
+        working-directory: ./source
+        run: |
+          git-lfs uninstall
+
+      - name: Migrate LFS
+        if: ${{ env.ENABLE_LFS }}
+        working-directory: ./source
+        run: |
+          git-lfs migrate export --verbose --include="*" --everything --skip-fetch --yes 2>&1
+
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.MIRROR_TOKEN_GITHUB }}
+          branch: ${{ github.ref }}
+          force: true
+          tags: true
+          directory: source
