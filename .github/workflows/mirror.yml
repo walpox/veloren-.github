@@ -16,6 +16,12 @@ on:
         type: boolean
         required: false
         default: false
+      token:
+        description: |
+          The personal access token used to perform operations.
+          Some permissions, such as `workflows` are only available to PAT and not to the default GITHUB_TOKEN.
+        type: string
+        default: ${{ secrets.GITHUB_TOKEN }}
 
 
 jobs:
@@ -24,6 +30,7 @@ jobs:
     env:
       REPOSITORY_URL: ${{ inputs.repository-url }}
       ENABLE_LFS: ${{ inputs.enable-lfs }}
+      GH_TOKEN: ${{ inputs.token }}
     steps:
       - name: Download and install Git LFS
         if: ${{ env.ENABLE_LFS }}
@@ -53,7 +60,7 @@ jobs:
       - name: Push changes
         uses: ad-m/github-push-action@master
         with:
-          github_token: ${{ secrets.MIRROR_TOKEN_GITHUB }}
+          github_token: ${{ inputs.token }}
           branch: ${{ github.ref }}
           force: true
           tags: true
