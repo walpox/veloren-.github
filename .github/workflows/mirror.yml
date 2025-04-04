@@ -12,14 +12,14 @@ on:
       enable-lfs:
         description: |
           Whether to work with Git LFS artifacts in the workflow.
-          There are certain limits on GitHub, so it is important to keep LFS disabled on some repositories.
+          There are certain limits on GitHub so it is important to keep LFS disabled on some repositories.
         type: boolean
         required: false
         default: false
       token:
         description: |
           The personal access token used to perform operations.
-          Some permissions, such as `workflows` are only available to PAT and not to the default GITHUB_TOKEN.
+          Some permissions, such as `workflows`, are only available to PATs and not to the default GITHUB_TOKEN.
         type: string
         required: false
         default: ${{ secrets.GITHUB_TOKEN }}
