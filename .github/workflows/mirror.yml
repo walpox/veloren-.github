@@ -28,32 +28,28 @@ on:
 jobs:
   mirror-remote-repo:
     runs-on: ubuntu-22.04
-    env:
-      REPOSITORY_URL: ${{ inputs.repository-url }}
-      ENABLE_LFS: ${{ inputs.enable-lfs }}
-      GH_TOKEN: ${{ inputs.token }}
     steps:
       - name: Download and install Git LFS
-        if: ${{ env.ENABLE_LFS }}
+        if: ${{ inputs.enable-lfs }}
         run: |
           sudo apt-get update
           sudo apt-get install git-lfs==2.13.3
 
       - name: Set up Git LFS
-        if: ${{ env.ENABLE_LFS }}
+        if: ${{ inputs.enable-lfs }}
         run: git-lfs install
 
       - name: Clone remote repository
-        run: git clone --branch ${{ github.ref }} ${{ env.REPOSITORY_URL }} source
+        run: git clone --branch ${{ github.ref }} ${{ inputs.repository-url }} source
 
       - name: Uninstall LFS
-        if: ${{ env.ENABLE_LFS }}
+        if: ${{ inputs.enable-lfs }}
         working-directory: ./source
         run: |
           git-lfs uninstall
 
       - name: Migrate LFS
-        if: ${{ env.ENABLE_LFS }}
+        if: ${{ inputs.enable-lfs }}
         working-directory: ./source
         run: |
           git-lfs migrate export --verbose --include="*" --everything --skip-fetch --yes 2>&1
