@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2025 Javier Pérez
+#
+# SPDX-License-Identifier: CC0-1.0
+
 # This is a reusable workflow to mirror a single branch from a remote git repository to GitHub.
 
 name: Mirror remote repository to GitHub
