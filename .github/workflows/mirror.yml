@@ -9,9 +9,11 @@ on:
         description: The HTTPS URL of the source git repository to clone to GitHub.
         type: string
         required: true
-      enable-lfs:
+      rewrite-lfs:
         description: |
-          Whether to work with Git LFS artifacts in the workflow.
+          Whether to convert Git LFS pointer files to their associated blob files, effectively disabling Git LFS in the mirror.
+          By default, LFS will be included in the mirror repository.
+          Be careful when enabling this option because it may increase the execution time of this workflow significantly.
           There are certain limits on GitHub so it is important to keep LFS disabled on some repositories.
         type: boolean
         required: false
@@ -29,26 +31,19 @@ jobs:
   mirror-remote-repo:
     runs-on: ubuntu-22.04
     steps:
+      # Installing Git LFS with apt configures LFS in the system-level git config file (/etc/gitconfig).
+      # Therefore, running `git lfs install` is not necessary.
       - name: Download and install Git LFS
-        if: ${{ inputs.enable-lfs }}
         run: |
           apt-get update
           apt-get install --assume-yes git-lfs=3.0.2-1ubuntu0.3
 
-      - name: Set up Git LFS
-        if: ${{ inputs.enable-lfs }}
-        run: git lfs install
-
       - name: Clone remote repository
         run: git clone --branch ${{ github.ref }} ${{ inputs.repository-url }} source
 
-      - name: Uninstall LFS
-        if: ${{ inputs.enable-lfs }}
-        working-directory: ./source
-        run: git lfs uninstall
-
+      # This will rewrite the git history, it will change the ID of most git objects in the mirror.
       - name: Migrate LFS
-        if: ${{ inputs.enable-lfs }}
+        if: ${{ inputs.rewrite-lfs }}
         working-directory: ./source
         run: git lfs migrate export --verbose --include="*" --everything --skip-fetch --yes 2>&1
 
