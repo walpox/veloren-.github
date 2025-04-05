@@ -1,4 +1,4 @@
-# This is a reusable workflow to mirror a remote git repository to GitHub.
+# This is a reusable workflow to mirror a single branch from a remote git repository to GitHub.
 
 name: Mirror remote repository to GitHub
 
